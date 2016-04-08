@@ -98,7 +98,8 @@
                 else {
                     // If this control is separate from the zoomControl, call the
                     // parent method so we don't leave behind an empty container
-                    return L.Control.prototype.removeFrom.call(this, map);
+                    // REMOVED AS THIS METHOD DOESN'T EXIST
+                    // return L.Control.prototype.removeFrom.call(this, map);
                 }
             },
 
