@@ -231,6 +231,8 @@
                                  ' event handlers to layer', e.layer);
                     console.warn('L.Control.Loading: Full details', exception);
                 }
+                if (e.layer._loading)
+                  this._handleLoading({type: 'loading', target: e.layer});
             },
 
             _layerRemove: function(e) {
