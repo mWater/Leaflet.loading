@@ -205,6 +205,26 @@
                 this.addLoader(this.getEventId(e));
             },
 
+            _handleBaseLayerChange: function (e) {
+                var that = this;
+
+                // Check for a target 'layer' that contains multiple layers, such as
+                // L.LayerGroup. This will happen if you have an L.LayerGroup in an
+                // L.Control.Layers.
+                if (e.layer && e.layer.eachLayer && typeof e.layer.eachLayer === 'function') {
+                    e.layer.eachLayer(function (layer) {
+                        that._handleBaseLayerChange({ layer: layer });
+                    });
+                }
+                else {
+                    // If we're changing to a canvas layer, don't handle loading
+                    // as canvas layers will not fire load events.
+                    if (!(L.TileLayer.Canvas && e.layer instanceof L.TileLayer.Canvas)) {
+                        that._handleLoading(e);
+                    }
+                }
+            },
+
             _handleLoad: function(e) {
                 this.removeLoader(this.getEventId(e));
             },
@@ -288,7 +308,7 @@
                 // events, eg, for AJAX calls that affect the map but will not be
                 // reflected in the above layer events.
                 map.on({
-                    baselayerchange: this._handleLoading,
+                    baselayerchange: this._handleBaseLayerChange,
                     dataloading: this._handleLoading,
                     dataload: this._handleLoad,
                     layerremove: this._handleLoad
@@ -297,7 +317,7 @@
 
             _removeMapListeners: function(map) {
                 map.off({
-                    baselayerchange: this._handleLoading,
+                    baselayerchange: this._handleBaseLayerChange,
                     dataloading: this._handleLoading,
                     dataload: this._handleLoad,
                     layerremove: this._handleLoad
